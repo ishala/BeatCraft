@@ -17,6 +17,7 @@ from transformers import (
 
 from beat_craft_sdk.evaluation.transformer_evaluation import (
     evaluate_with_EMD,
+    evaluate_midi_output,
     calculate_statistics,
     identify_outliers,
     plot_histogram,
@@ -204,7 +205,7 @@ class CraftingTransformer(CraftStrategy):
         return midi_notes, decoded_music or 'Melodi kosong, tidak ada data yang dihasilkan.'
 
 
-    def evaluate(self, generated_sequence, output_dir, file_name, 
+    def evaluate(self, generated_sequence, midiNotes, output_dir, file_name, 
                  game_mood=None, game_genre=None, game_emotional=None, 
                  val_dir='assets/val_data.csv'):
         
@@ -238,5 +239,16 @@ class CraftingTransformer(CraftStrategy):
 
                 # Plot scatter plot with mean line
                 plot_scatter(evalRes, mean_value=stats['mean'])
+                
+                # metrics = evaluate_classification_metrics(valDf=valDf, 
+                #                                           generated_sequence=generated_sequence)
+                
+                results, summary = evaluate_midi_output(valDf=valDf, generated_midi=midiNotes)
+                # Cetak summary
+                print("\nSummary of Evaluation Results:")
+                for metric, value in summary.items():
+                    print(f"{metric}: {value:.4f}")
             else: 
                 print('Data genre tidak lengkap.')
+        
+        return results, summary

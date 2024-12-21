@@ -26,12 +26,13 @@ class BeatCraft:
     # Periksa apakah melody_engine adalah instance dari CraftingTransformer
         if isinstance(self.melody_engine, CraftingTransformer):
             notes, decoded_music = self.melody_engine.generate(self.config.get_output_dir(), self.config.get_file_name(), self.config.get_game_emotional())
-            self.melody_engine.evaluate(decoded_music, self.config.get_output_dir(), self.config.get_file_name(), 
+            results, summary = self.melody_engine.evaluate(decoded_music, notes, self.config.get_output_dir(), self.config.get_file_name(), 
                                         game_mood=game_mood, game_genre=game_genre, game_emotional=game_emotional)
         else:
             notes = self.melody_engine.generate(self.config.get_output_dir(), self.config.get_file_name(), self.config.get_midi_notes(self.config.get_game_emotional()))
             self.melody_engine.evaluate(self.config.get_output_dir(), self.config.get_file_name())
-        return notes
+            results, summary = []
+        return notes, results, summary
 
     def melody_to_midi(self, generated_notes=None):
         mid = MidiFile()
